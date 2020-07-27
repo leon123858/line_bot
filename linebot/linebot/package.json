@@ -1,0 +1,13 @@
+{
+  "name": "linebot",
+  "version": "0.0.0",
+  "description": "linebot",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "@line/bot-sdk": "^7.0.0",
+    "express": "^4.17.1"
+  }
+}
