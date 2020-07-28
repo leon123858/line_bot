@@ -117,7 +117,7 @@ function handleEvent(event) {
                 return say(client, event, '請直接在下方輸入想說的話(不可中途送出)', '謝謝(如果希望讓我知道是誰寄的可以在下面署名喔)');
             }
             else if (event.message.text.split('-')[0] == '紀錄ID') {
-                fs.appendFile('./static/IDrecord.txt', '\n' + event.message.text, function (err) {
+                fs.appendFile('./static/IDrecord.txt', '\n' + event.message.text +'['+ event.source.userId + ']', function (err) {
                     if (err) console.log(err);
                     else console.log('Write operation complete.');
                 });
