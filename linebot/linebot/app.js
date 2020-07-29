@@ -121,7 +121,7 @@ function handleEvent(event) {
                     if (err) console.log(err);
                     else console.log('Write operation complete.');
                 });
-                return say(client, event, '謝謝 已記下line對應資料', '之後將根據您的填表結果傳遞個人化資訊');
+                return say(client, event, '謝謝 已記下line對應資料', '之後將根據您的填表結果傳遞個人化資訊\n問卷連結:XXXXXXX');
             }
             else
                 return say(client, event, '無此功能, 情直接輸入指令\nex:課表', '謝謝使用,如有問題請聯絡XXXXXX');
