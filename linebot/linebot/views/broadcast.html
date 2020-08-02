@@ -4,14 +4,45 @@
 <head>
     <meta charset="utf-8" />
     <title>broadcast</title>
+    <script src="../static/JSL/jquery.js"></script>
+    <link rel="stylesheet" href="../static/JSL/UnoDropZone.css">
+    <script src="../static/JSL/UnoDropZone.js"></script>
 </head>
 <body>
     <h1>廣播區</h1>
-    <form action="/broadcast" method="post">
-        帳號:<input type="text" name="username"><br><br>
-        密碼:<input type="password" name="userpassword"><br><br>
-        <textarea cols="50" rows="5" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
-        <input type="submit" value="廣播" />
-    </form>
+    <div>
+        <div>
+            <h2>文字區</h2>
+            <form action="/broadcast" method="post">
+                帳號:<input type="text" name="username"><br><br>
+                密碼:<input type="password" name="userpassword"><br><br>
+                <textarea cols="50" rows="5" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
+                <input type="submit" value="廣播" />
+            </form>
+        </div>
+        <div>
+            <h4>可複製下方表情貼圖座使用</h4>
+            <textarea cols="50" rows="5" readonly><%=emoji%></textarea>
+        </div>
+    </div>
+    <div>
+        <h2>圖片區</h2>
+        <form action="/broadcast" method="post">
+            帳號:<input type="text" name="username"><br><br>
+            密碼:<input type="password" name="userpassword"><br><br>
+            <div id="img" class="file-upload" data-input-name="inputImg" style="background: cornflowerblue;color: whitesmoke;width:40%;">
+            </div><br>
+            <input id="HiddenImg" type="hidden" name="img"/>
+            <input type="submit" value="廣播" />
+        </form>
+    </div>
+    <script>
+        $(document).ready(function () {
+            UnoDropZone.init();
+            $("#HiddenImg").next("submit").click(function () {
+                $("#HiddenImg").val($("#img").attr("src"));
+            });
+        });
+    </script>
 </body>
 </html>

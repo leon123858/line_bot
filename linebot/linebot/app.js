@@ -49,7 +49,14 @@ app.get('/view', function (req, res) {
 });
 //changeview
 app.get('/changeview/:aid', function (req, res, next) {
-    res.render(req.params.aid.toString());
+    if (req.params.aid.toString() == 'broadcast') {
+        fs.readFile('./static/emoji.txt', 'utf8', function (err, data) {
+            if (err) { console.log(err); return; }
+            res.render(req.params.aid.toString(), { emoji: data});
+        });
+    }
+    else
+        res.render(req.params.aid.toString());
 });
 //line bot
 app.post('/', line.middleware(config), (req, res) => {
@@ -69,7 +76,7 @@ function showImg(who, where, name, prename, words, str) {
     return who.replyMessage(where.replyToken,[
         {
             type: 'image',
-            originalContentUrl: HTTPpath+'/'+ + name +'.jpg',
+            originalContentUrl: HTTPpath+'/'+ name +'.jpg',
             previewImageUrl: HTTPpath + '/'+ prename + '.jpg'
         },
         { type: 'text', text: words + '\n' + str }]
@@ -119,7 +126,7 @@ function handleEvent(event) {
             else if (event.message.text == '行事曆')
                 return showImg(client, event, 'schedule', 'schedule', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '教學')
-                return say(client, event, learn_word, '謝謝使用,如有問題請聯絡XXXXXX');
+                return say(client, event,   '😀' + learn_word, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '抽名言')
                 return random_nice_string(client, event);
             else if (event.message.text == '成績') {
@@ -162,11 +169,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); //get json
 //broadcast
 app.post('/broadcast', function (req, res) {
-    const echo = { type: 'text', text: req.body.str };
+    //const echo = { type: 'text', text: req.body.str };
+    console.log(req.body);
+    const img = {
+        type: 'image',
+        originalContentUrl: req.body.img,
+        previewImageUrl: req.body.img
+    }
     if (req.body.username == 'admin' && req.body.userpassword == '0000')
         res.render("index");
-    console.log("broadcast:" + echo);
-    client.broadcast(echo);
+    //console.log("broadcast:" + echo);
+    //client.broadcast(echo);
+    client.broadcast(img);
 })
 
 var server = app.listen(8080, function () {
