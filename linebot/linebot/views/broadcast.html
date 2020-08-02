@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <title>broadcast</title>
     <script src="../static/JSL/jquery.js"></script>
-    <link rel="stylesheet" href="../static/JSL/UnoDropZone.css">
-    <script src="../static/JSL/UnoDropZone.js"></script>
+    <!--<link rel="stylesheet" href="../static/JSL/UnoDropZone.css">
+    <script src="../static/JSL/UnoDropZone.js"></script>-->
 </head>
 <body>
     <h1>廣播區</h1>
     <div>
         <div>
             <h2>文字區</h2>
-            <form action="/broadcast" method="post">
+            <form action="/broadcast/string" method="post">
                 帳號:<input type="text" name="username"><br><br>
                 密碼:<input type="password" name="userpassword"><br><br>
                 <textarea cols="50" rows="5" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
@@ -27,21 +27,19 @@
     </div>
     <div>
         <h2>圖片區</h2>
-        <form action="/broadcast" method="post">
+        <form action="/broadcast/img" method="post" enctype="multipart/form-data">
             帳號:<input type="text" name="username"><br><br>
             密碼:<input type="password" name="userpassword"><br><br>
-            <div id="img" class="file-upload" data-input-name="inputImg" style="background: cornflowerblue;color: whitesmoke;width:40%;">
-            </div><br>
-            <input id="HiddenImg" type="hidden" name="img"/>
+            <input name="last" type="text" placeholder="副檔名 ex:jpg,png"/>
+            <div>
+                <input type="file" name="img" accept="image/*">
+            </div>
             <input type="submit" value="廣播" />
         </form>
     </div>
     <script>
         $(document).ready(function () {
-            UnoDropZone.init();
-            $("#HiddenImg").next("submit").click(function () {
-                $("#HiddenImg").val($("#img").attr("src"));
-            });
+            
         });
     </script>
 </body>

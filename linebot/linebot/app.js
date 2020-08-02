@@ -3,12 +3,14 @@ var fs = require('fs');
 var line = require('@line/bot-sdk');
 var express = require('express');
 var bodyParser = require('body-parser');
+var multer = require("multer");
 var app = new express();
 var HTTPpath = "";
 var learn_word = "";
 var gradeTable = {};
 var usermode = {};
-
+//multer set 上傳目標
+const upload = multer({ dest: "static/tmp" });
 //ejs set
 app.engine('.html', require('ejs').__express)
 app.set('view engine', 'html')
@@ -168,21 +170,34 @@ function handleEvent(event) {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); //get json
 //broadcast
-app.post('/broadcast', function (req, res) {
-    //const echo = { type: 'text', text: req.body.str };
-    console.log(req.body);
+app.post('/broadcast/:aid', upload.single('img'), (req, res) => {
+    if (req.body.username == 'admin' && req.body.userpassword == '0000') {
+        //console.log(req.body);
+        if (req.params.aid.toString() == 'string') {
+            const echo = { type: 'text', text: req.body.str };
+            client.broadcast(echo);
+            res.render("index");
+        }
+        if (req.params.aid.toString() == 'img') {
+            fs.rename(req.file.path, req.file.path + "." + req.body.last, function (err) {
+                if (err) throw err;
+                console.log(req.file.path + "." + req.body.last + "~~ok");
+                res.render("img_send", { path: "..\\" + req.file.path + "." + req.body.last });
+            });
+        }
+    }
+})
+app.post('/broadcast_img', function (req, res) {
+    let str = HTTPpath + req.body.path.toString().replace('..\\', '/').replace('\\', '/').replace('\\', '/');
     const img = {
         type: 'image',
-        originalContentUrl: req.body.img,
-        previewImageUrl: req.body.img
+        originalContentUrl: str,
+        previewImageUrl: str
     }
-    if (req.body.username == 'admin' && req.body.userpassword == '0000')
-        res.render("index");
-    //console.log("broadcast:" + echo);
-    //client.broadcast(echo);
+    console.log(img);
+    res.render("index");
     client.broadcast(img);
 })
-
 var server = app.listen(8080, function () {
     var port = server.address().port;
     console.log('app now running on port', port);
