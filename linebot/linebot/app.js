@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = new express();
 var HTTPpath = "";
+var learn_word = "";
 var gradeTable = {};
 var usermode = {};
 
@@ -25,6 +26,10 @@ fs.readFile('./static/grade.csv', 'utf8', function (err, data) {
         let list = dataArray[i].split('\t');
         gradeTable[list[0]] = {1:list[1], 2:list[2], 3:list[3]}
     }
+});
+fs.readFile('./static/learn.txt', 'utf8', function (err, data) {
+    if (err) { console.log(err); return; }
+    learn_word = data.toString();
 });
 //get static data by http
 app.use(express.static(__dirname + '/static'));//使html直接去static資料夾找連結靜態資料
@@ -57,6 +62,9 @@ app.post('/', line.middleware(config), (req, res) => {
         });
 });
 //function in handler for line bot
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
 function showImg(who, where, name, prename, words, str) {
     return who.replyMessage(where.replyToken,[
         {
@@ -79,6 +87,19 @@ function getgrade(int) {
     else
         return  '沒有這個座號\n輸入範例:12';
 }
+function random_nice_string(who,where) {
+    fs.readFile('./static/nice_string.txt', 'utf8', function (err, data) {
+        if (err) {
+            console.log(err);
+            return say(client, event, '今天沒句子', '謝謝使用,如有問題請聯絡XXXXXX');
+        }
+        let list = data.toString().split('\r\n');
+        let str = list[getRandomInt(list.length)];
+        console.log(str);
+        if (str == "")  str = list[0];
+        return say(who, where, str, '謝謝使用,如有問題請聯絡XXXXXX');
+    });
+}
 // event handler
 function handleEvent(event) {
     console.log(event);
@@ -94,11 +115,13 @@ function handleEvent(event) {
                 return say(client, event, '感謝您的意見反映', '謝謝使用,如有問題請聯絡XXXXXX');
             }
             else if (event.message.text == '課表')
-                return showImg(client, event, '1', '1', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
+                return showImg(client, event, 'classtable', 'classtable', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '行事曆')
-                return showImg(client, event, '2', '2', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
+                return showImg(client, event, 'schedule', 'schedule', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '教學')
-                return say(client, event, '以下語句直接輸入就可以得到相應資訊\n1.教學\n2.課表\n3.行事曆\n4.成績\n5.意見反映\n6.紀錄ID-家長姓名-學生姓名', '謝謝使用,如有問題請聯絡XXXXXX');
+                return say(client, event, learn_word, '謝謝使用,如有問題請聯絡XXXXXX');
+            else if (event.message.text == '抽名言')
+                return random_nice_string(client, event);
             else if (event.message.text == '成績') {
                 usermode[event.source.userId] = 'askgrade';
                 return say(client, event, '請告訴我學號幾號', '謝謝');
@@ -127,7 +150,7 @@ function handleEvent(event) {
                 return say(client, event, '無此功能, 情直接輸入指令\nex:課表', '謝謝使用,如有問題請聯絡XXXXXX');
         case 'sticker':
             console.log('sticker');
-            return say(client, event,'我看不懂貼圖', '寶寶可愛');
+            return say(client, event,'我看不懂貼圖', '可愛');
         default:
             console.log('default');
             return Promise.resolve(null);
