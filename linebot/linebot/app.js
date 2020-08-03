@@ -16,12 +16,12 @@ app.engine('.html', require('ejs').__express)
 app.set('view engine', 'html')
 app.set('views', __dirname + '/views');//指定模板位置
 //get static data
-fs.readFile('./static/httpPath.txt', function (err, data) {
+fs.readFile('./static/data/httpPath.txt', function (err, data) {
     if (err) { console.log(err); return; }
     HTTPpath = data.toString();
     console.log(HTTPpath);
 })
-fs.readFile('./static/grade.csv', 'utf8', function (err, data) {
+fs.readFile('./static/data/grade.csv', 'utf8', function (err, data) {
     if (err) {console.log(err);return;}
     let dataArray = data.split('\r\n');
     for (var i = 0; i < dataArray.length; i++) {
@@ -29,7 +29,7 @@ fs.readFile('./static/grade.csv', 'utf8', function (err, data) {
         gradeTable[list[0]] = {1:list[1], 2:list[2], 3:list[3]}
     }
 });
-fs.readFile('./static/learn.txt', 'utf8', function (err, data) {
+fs.readFile('./static/data/learn.txt', 'utf8', function (err, data) {
     if (err) { console.log(err); return; }
     learn_word = data.toString();
 });
@@ -52,7 +52,7 @@ app.get('/view', function (req, res) {
 //changeview
 app.get('/changeview/:aid', function (req, res, next) {
     if (req.params.aid.toString() == 'broadcast') {
-        fs.readFile('./static/emoji.txt', 'utf8', function (err, data) {
+        fs.readFile('./static/data/emoji.txt', 'utf8', function (err, data) {
             if (err) { console.log(err); return; }
             res.render(req.params.aid.toString(), { emoji: data});
         });
@@ -97,7 +97,7 @@ function getgrade(int) {
         return  '沒有這個座號\n輸入範例:12';
 }
 function random_nice_string(who,where) {
-    fs.readFile('./static/nice_string.txt', 'utf8', function (err, data) {
+    fs.readFile('./static/data/nice_string.txt', 'utf8', function (err, data) {
         if (err) {
             console.log(err);
             return say(client, event, '今天沒句子', '謝謝使用,如有問題請聯絡XXXXXX');
@@ -119,27 +119,53 @@ function showbutton(who, where) {
             "actions": [
                 {
                     "type": "message",
-                    "label": "第一個按鈕",
-                    "data": "1"
+                    "label": "選單",
+                    "text": "選單"
                 },
                 {
                     "type": "message",
-                    "label": "第一個按鈕",
-                    "data": "寄的東西"
+                    "label": "教學",
+                    "text": "教學"
                 },
                 {
                     "type": "message",
-                    "label": "第一個按鈕",
-                    "data": "1"
+                    "label": "課表",
+                    "text": "課表"
                 },
                 {
                     "type": "message",
-                    "label": "第一個按鈕",
-                    "data": "1"
+                    "label": "行事曆",
+                    "text": "行事曆"
                 }
             ]
         }
     }
+    var message2 = {
+        "type": "template",
+        "altText": "本裝置不支援顯示樣板",
+        "template": {
+            "type": "buttons",
+            "text": "快速功能",
+            "actions": [
+                {
+                    "type": "message",
+                    "label": "成績",
+                    "text": "成績"
+                },
+                {
+                    "type": "message",
+                    "label": "意見反映",
+                    "text": "意見反映"
+                },
+                {
+                    "type": "message",
+                    "label": "抽名言",
+                    "text": "抽名言"
+                }
+            ]
+        }
+    }
+    return who.replyMessage(where.replyToken, [message1, message2]);
 }
 // event handler
 function handleEvent(event) {
@@ -148,15 +174,15 @@ function handleEvent(event) {
         case 'text':
             console.log(event.message.text);
             if (usermode[event.source.userId] == 'somerequest') {
-                fs.appendFile('./static/requestrecord.txt', '\n-------------\n' + event.message.text + '\n-------------\n', function (err) {
+                fs.appendFile('./static/data/requestrecord.txt', '\n-------------\n' + event.message.text + '\n-------------\n', function (err) {
                     if (err) console.log(err);
                     else console.log('Write operation complete.');
                 });
                 usermode[event.source.userId] = '';
                 return say(client, event, '感謝您的意見反映', '謝謝使用,如有問題請聯絡XXXXXX');
             }
-            else if (event.message.text == '課表')
-                return showbutton(client, event, learn_word.split('\r\n'));
+            else if (event.message.text == '選單')
+                return showbutton(client, event);
             else if (event.message.text == '課表')
                 return showImg(client, event, 'classtable', 'classtable', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '行事曆')
@@ -183,7 +209,7 @@ function handleEvent(event) {
                 return say(client, event, '請直接在下方輸入想說的話(不可中途送出)', '謝謝(如果希望讓我知道是誰寄的可以在下面署名喔)');
             }
             else if (event.message.text.split('-')[0] == '紀錄ID') {
-                fs.appendFile('./static/IDrecord.txt', '\n' + event.message.text +'['+ event.source.userId + ']', function (err) {
+                fs.appendFile('./static/data/IDrecord.txt', '\n' + event.message.text +'['+ event.source.userId + ']', function (err) {
                     if (err) console.log(err);
                     else console.log('Write operation complete.');
                 });
@@ -212,11 +238,18 @@ app.post('/broadcast/:aid', upload.single('img'), (req, res) => {
             client.broadcast(echo);
             res.render("index");
         }
-        if (req.params.aid.toString() == 'img') {
+        else if (req.params.aid.toString() == 'img') {
             fs.rename(req.file.path, req.file.path + "." + req.body.last, function (err) {
                 if (err) throw err;
                 console.log(req.file.path + "." + req.body.last + "~~ok");
                 res.render("img_send", { path: "..\\" + req.file.path + "." + req.body.last });
+            });
+        }
+        else if (req.params.aid.toString() == 'pdf') {
+            fs.rename(req.file.path, req.file.path + ".pdf" , function (err) {
+                if (err) throw err;
+                console.log(req.file.path + ".pdf" + "~~ok");
+                res.render("pdf_send", { path: "..\\" + req.file.path + ".pdf" });
             });
         }
     }
@@ -232,6 +265,24 @@ app.post('/broadcast_img', function (req, res) {
     res.render("index");
     client.broadcast(img);
 })
+app.post('/broadcast_pdf', function (req, res) {
+    let str = HTTPpath + req.body.path.toString().replace('..\\', '/').replace('\\', '/').replace('\\', '/');
+    const echo = { type: 'text', text: HTTPpath + '/write_pdf?path=' + str + '&num=' + req.body.num + '\r\n' + req.body.say.toString() };
+    client.broadcast(echo);
+    res.render("index");
+})
+app.get('/write_pdf', function (req, res) {
+    res.render('pdf_sign', { path: req.query.path, num: req.query.num });
+});
+app.post('/sign', function (req, res) {
+    fs.appendFile('./static/data/paper.txt', '\n----------\n' + req.body.num + '\n' + req.body.name + '\n' + req.body.say, function (err) {
+        if (err) console.log(err);
+        else {
+            console.log('Write operation complete.');
+            res.render('index');
+        }
+    });
+});
 var server = app.listen(8080, function () {
     var port = server.address().port;
     console.log('app now running on port', port);

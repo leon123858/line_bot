@@ -30,16 +30,28 @@
         <form action="/broadcast/img" method="post" enctype="multipart/form-data">
             帳號:<input type="text" name="username"><br><br>
             密碼:<input type="password" name="userpassword"><br><br>
-            <input name="last" type="text" placeholder="副檔名 ex:jpg,png"/>
+            <input name="last" type="text" placeholder="副檔名 ex:jpg,png" />
             <div>
                 <input type="file" name="img" accept="image/*">
             </div>
             <input type="submit" value="廣播" />
         </form>
     </div>
+    <div>
+        <h2>通知單區</h2>
+        <h4>限pdf檔</h4>
+        <form action="/broadcast/pdf" method="post" enctype="multipart/form-data">
+            帳號:<input type="text" name="username"><br><br>
+            密碼:<input type="password" name="userpassword"><br><br>
+            <div>
+                <input type="file" name="img" accept=".pdf">
+            </div>
+            <input type="submit" value="廣播" />
+        </form>
+    </div>
     <script>
         $(document).ready(function () {
-            
+
         });
     </script>
 </body>

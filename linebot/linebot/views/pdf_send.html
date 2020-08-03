@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="../static/JSL/jquery.js"></script>
+</head>
+<body>
+    <iframe src="" style="width:100%; height:600px;" frameborder="0"></iframe>
+    <p><%=path%></p>
+    <form action="/broadcast_pdf" method="post">
+        <input id="path" type="text" name="path" value="" readonly />
+        <input type="text" name="say" placeholder="輸入通知單的說明文字..." required>
+        <input type="text" name="num" placeholder="輸入通知單的編號,限英文" value="null" required>
+        <input type="submit" value="廣播此通知單" />
+    </form>
+    <script>
+        $(document).ready(function () {
+            $("#path").val($("p").html());
+            $("iframe").attr("src", $("p").html());
+            $("p").hide();
+        });
+    </script>
+</body>
+</html>
