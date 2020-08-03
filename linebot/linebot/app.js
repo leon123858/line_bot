@@ -109,6 +109,38 @@ function random_nice_string(who,where) {
         return say(who, where, str, '謝謝使用,如有問題請聯絡XXXXXX');
     });
 }
+function showbutton(who, where) {
+    var message1 = {
+        "type": "template",
+        "altText": "本裝置不支援顯示樣板",
+        "template": {
+            "type": "buttons",
+            "text": "快速功能",
+            "actions": [
+                {
+                    "type": "message",
+                    "label": "第一個按鈕",
+                    "data": "1"
+                },
+                {
+                    "type": "message",
+                    "label": "第一個按鈕",
+                    "data": "寄的東西"
+                },
+                {
+                    "type": "message",
+                    "label": "第一個按鈕",
+                    "data": "1"
+                },
+                {
+                    "type": "message",
+                    "label": "第一個按鈕",
+                    "data": "1"
+                }
+            ]
+        }
+    }
+}
 // event handler
 function handleEvent(event) {
     console.log(event);
@@ -123,6 +155,8 @@ function handleEvent(event) {
                 usermode[event.source.userId] = '';
                 return say(client, event, '感謝您的意見反映', '謝謝使用,如有問題請聯絡XXXXXX');
             }
+            else if (event.message.text == '課表')
+                return showbutton(client, event, learn_word.split('\r\n'));
             else if (event.message.text == '課表')
                 return showImg(client, event, 'classtable', 'classtable', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '行事曆')
