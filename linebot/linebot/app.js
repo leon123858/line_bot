@@ -51,17 +51,16 @@ const client = new line.Client(config);
 app.get('/view', function (req, res) {
     res.render("index");//轉換頁面 find from views
 });
-function readMongoDB() {
+function readMongoDB(req,res) {
     MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var table = db.db("linebotDB").collection("questions");
-        var findThing = { };
+        var findThing = {};
         table.find(findThing, { projection: { _id: 0,id:1,type:1,include:1 } }).toArray(function (err, result) {
             if (err) throw err;
             db.close();
-            return result;
+            res.render(req.params.aid.toString(), { data: result, num: result.length });
         });
-        return 'null';
     });
 }
 //changeview
@@ -73,9 +72,7 @@ app.get('/changeview/:aid', function (req, res, next) {
         });
     }
     else if (req.params.aid.toString() == 'get_question') {
-        let object = {};
-        console.log(readMongoDB());
-        res.render(req.params.aid.toString(), object);
+        readMongoDB(req,res);
     }
     else
         res.render(req.params.aid.toString());
@@ -304,6 +301,12 @@ function handleEvent(event) {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); //get json
 //broadcast
+app.post('/get_answer', function (req, res) {
+    res.render('get_answer');
+});
+app.post('/solve', function (req, res) {
+
+});
 app.post('/broadcast/:aid', upload.single('img'), (req, res) => {
     if (req.body.username == 'admin' && req.body.userpassword == '0000') {
         //console.log(req.body);

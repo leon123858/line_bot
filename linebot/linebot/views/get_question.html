@@ -9,8 +9,15 @@
     <h1>解題</h1>
     <h3>點擊題目開始解題</h3>
     <div>
-        
-        <span></span>
+        <%for( var i=0; i < num ; i ++) {%>
+        <form action="/get_answer" method="post">
+            <input type="text" name="id" value="<%=data[i]['id']%>" readonly>
+            <input type="text" name="type" value="<%=data[i]['type']%>" readonly>
+            <input type="text" name="include" value="<%=data[i]['include']%>" readonly>
+            <br>
+            <input type="submit" value="我來解吧" />
+        </form>
+        <%}%>
     </div>
 </body>
 </html>
