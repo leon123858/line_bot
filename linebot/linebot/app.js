@@ -1,9 +1,11 @@
 'use strict';
 var fs = require('fs');
 var line = require('@line/bot-sdk');
+var request = require('request');
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require("multer");
+var MongoClient = require('mongodb').MongoClient;
 var app = new express();
 var HTTPpath = "";
 var learn_word = "";
@@ -49,6 +51,19 @@ const client = new line.Client(config);
 app.get('/view', function (req, res) {
     res.render("index");//轉換頁面 find from views
 });
+function readMongoDB() {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var table = db.db("linebotDB").collection("questions");
+        var findThing = { };
+        table.find(findThing, { projection: { _id: 0,id:1,type:1,include:1 } }).toArray(function (err, result) {
+            if (err) throw err;
+            db.close();
+            return result;
+        });
+        return 'null';
+    });
+}
 //changeview
 app.get('/changeview/:aid', function (req, res, next) {
     if (req.params.aid.toString() == 'broadcast') {
@@ -56,6 +71,11 @@ app.get('/changeview/:aid', function (req, res, next) {
             if (err) { console.log(err); return; }
             res.render(req.params.aid.toString(), { emoji: data});
         });
+    }
+    else if (req.params.aid.toString() == 'get_question') {
+        let object = {};
+        console.log(readMongoDB());
+        res.render(req.params.aid.toString(), object);
     }
     else
         res.render(req.params.aid.toString());
@@ -161,12 +181,48 @@ function showbutton(who, where) {
                     "type": "message",
                     "label": "抽名言",
                     "text": "抽名言"
+                },
+                {
+                    "type": "message",
+                    "label": "問問題",
+                    "text": "問問題"
                 }
             ]
         }
     }
     return who.replyMessage(where.replyToken, [message1, message2]);
 }
+function mongodbInsert(where,type,include) {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        //Write databse Insert/Update/Query code here..
+        var table = db.db("linebotDB").collection("questions");
+        var obj = { id: where.source.userId, type: type, include: include };
+        table.insertOne(obj, function (err, res) { // insertMany 是插入多個用的
+            if (err) throw err;
+            console.log("insert success");
+        });
+        db.close(); //關閉連線
+    });
+};
+function downloadContent(client,messageId, downloadPath) {
+    return client.getMessageContent(messageId)
+        .then((stream) => new Promise((resolve, reject) => {
+            const writable = fs.createWriteStream(downloadPath);
+            stream.pipe(writable);
+            stream.on('end', () => resolve(downloadPath));
+            stream.on('error', reject);
+        }));
+}
+function savequestion(who,where, type) {
+    if (type == 'text')
+        mongodbInsert(where, type, where.message.text);
+    else if (type == 'image') {
+        let dstpath = './static/questions/' + where.message.id + '.jpg';
+        downloadContent(who, where.message.id, dstpath);
+        mongodbInsert(where, type, dstpath);
+    }
+};
 // event handler
 function handleEvent(event) {
     console.log(event);
@@ -180,6 +236,11 @@ function handleEvent(event) {
                 });
                 usermode[event.source.userId] = '';
                 return say(client, event, '感謝您的意見反映', '謝謝使用,如有問題請聯絡XXXXXX');
+            }
+            else if (usermode[event.source.userId] == 'askquestion') {
+                usermode[event.source.userId] = '';
+                savequestion(client,event, 'text');
+                return say(client, event, '😀' + '已記錄問題,過幾天來此輸入\'我要答案\'就可以得到回應囉', '謝謝使用,如有問題請聯絡XXXXXX');
             }
             else if (event.message.text == '選單')
                 return showbutton(client, event);
@@ -208,6 +269,10 @@ function handleEvent(event) {
                 usermode[event.source.userId] = 'somerequest';
                 return say(client, event, '請直接在下方輸入想說的話(不可中途送出)', '謝謝(如果希望讓我知道是誰寄的可以在下面署名喔)');
             }
+            else if (event.message.text == '問問題') {
+                usermode[event.source.userId] = 'askquestion';
+                return say(client, event, '請直接在下方輸入想問的問題, 文字或圖片(擇一,不可中斷)', '謝謝使用');
+            }
             else if (event.message.text.split('-')[0] == '紀錄ID') {
                 fs.appendFile('./static/data/IDrecord.txt', '\n' + event.message.text +'['+ event.source.userId + ']', function (err) {
                     if (err) console.log(err);
@@ -216,10 +281,19 @@ function handleEvent(event) {
                 return say(client, event, '謝謝 已記下line對應資料', '之後將根據您的填表結果傳遞個人化資訊\n問卷連結:XXXXXXX');
             }
             else
-                return say(client, event, '無此功能, 情直接輸入指令\nex:課表', '謝謝使用,如有問題請聯絡XXXXXX');
+                return say(client, event, '無此功能, 請直接輸入指令\nex:課表', '謝謝使用,如有問題請聯絡XXXXXX');
         case 'sticker':
             console.log('sticker');
-            return say(client, event,'我看不懂貼圖', '可愛');
+            return say(client, event, '我看不懂貼圖', '可愛');
+        case 'image':
+            console.log('image');
+            if (usermode[event.source.userId] == 'askquestion') {
+                usermode[event.source.userId] = '';
+                savequestion(client,event, 'image');
+                return say(client, event, '😀' + '已記錄問題,過幾天來此輸入\'我要答案\'就可以得到回應囉', '謝謝使用,如有問題請聯絡XXXXXX');
+            }
+            else
+                return say(client, event, '請先輸入想使用的功能,\nex:課表', '謝謝使用,如有問題請聯絡XXXXXX');
         default:
             console.log('default');
             return Promise.resolve(null);

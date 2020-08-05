@@ -34,6 +34,12 @@
     <Content Include="views\broadcast.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="views\get_answer.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="views\get_question.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\img_send.html">
       <SubType>Code</SubType>
     </Content>
