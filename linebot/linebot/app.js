@@ -13,6 +13,7 @@ var gradeTable = {};
 var usermode = {};
 //multer set 上傳目標
 const upload = multer({ dest: "static/tmp" });
+const uploadAns = multer({ dest: "static/ans" });
 //ejs set
 app.engine('.html', require('ejs').__express)
 app.set('view engine', 'html')
@@ -24,11 +25,11 @@ fs.readFile('./static/data/httpPath.txt', function (err, data) {
     console.log(HTTPpath);
 })
 fs.readFile('./static/data/grade.csv', 'utf8', function (err, data) {
-    if (err) {console.log(err);return;}
+    if (err) { console.log(err); return; }
     let dataArray = data.split('\r\n');
     for (var i = 0; i < dataArray.length; i++) {
         let list = dataArray[i].split('\t');
-        gradeTable[list[0]] = {1:list[1], 2:list[2], 3:list[3]}
+        gradeTable[list[0]] = { 1: list[1], 2: list[2], 3: list[3] }
     }
 });
 fs.readFile('./static/data/learn.txt', 'utf8', function (err, data) {
@@ -51,14 +52,15 @@ const client = new line.Client(config);
 app.get('/view', function (req, res) {
     res.render("index");//轉換頁面 find from views
 });
-function readMongoDB(req,res) {
+function readMongoDB(req, res) {
     MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var table = db.db("linebotDB").collection("questions");
         var findThing = {};
-        table.find(findThing, { projection: { _id: 0,id:1,type:1,include:1 } }).toArray(function (err, result) {
+        table.find(findThing, { projection: { _id: 0, id: 1, type: 1, include: 1, time: 1 } }).toArray(function (err, result) {
             if (err) throw err;
             db.close();
+            console.log(result);
             res.render(req.params.aid.toString(), { data: result, num: result.length });
         });
     });
@@ -68,11 +70,11 @@ app.get('/changeview/:aid', function (req, res, next) {
     if (req.params.aid.toString() == 'broadcast') {
         fs.readFile('./static/data/emoji.txt', 'utf8', function (err, data) {
             if (err) { console.log(err); return; }
-            res.render(req.params.aid.toString(), { emoji: data});
+            res.render(req.params.aid.toString(), { emoji: data });
         });
     }
     else if (req.params.aid.toString() == 'get_question') {
-        readMongoDB(req,res);
+        readMongoDB(req, res);
     }
     else
         res.render(req.params.aid.toString());
@@ -88,20 +90,30 @@ app.post('/', line.middleware(config), (req, res) => {
         });
 });
 //function in handler for line bot
+function TransferString(content) {
+    var string = content;
+    try {
+        string = string.replace(/\r\n/g, ",")
+        string = string.replace(/\n/g, ",");
+    } catch (e) {
+        alert(e.message);
+    }
+    return string;
+}
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 function showImg(who, where, name, prename, words, str) {
-    return who.replyMessage(where.replyToken,[
+    return who.replyMessage(where.replyToken, [
         {
             type: 'image',
-            originalContentUrl: HTTPpath+'/'+ name +'.jpg',
-            previewImageUrl: HTTPpath + '/'+ prename + '.jpg'
+            originalContentUrl: HTTPpath + '/' + name + '.jpg',
+            previewImageUrl: HTTPpath + '/' + prename + '.jpg'
         },
         { type: 'text', text: words + '\n' + str }]
     )
 }
-function say(who,where, words,str) {
+function say(who, where, words, str) {
     // create a echoing text message
     const echo = { type: 'text', text: words + '\n' + str };
     // use reply API
@@ -111,9 +123,9 @@ function getgrade(int) {
     if (gradeTable[int.toString()])
         return 'first test:' + gradeTable[int.toString()][1] + '\nsecond test:' + gradeTable[int.toString()][2] + '\nthird test:' + gradeTable[int.toString()][3];
     else
-        return  '沒有這個座號\n輸入範例:12';
+        return '沒有這個座號\n輸入範例:12';
 }
-function random_nice_string(who,where) {
+function random_nice_string(who, where) {
     fs.readFile('./static/data/nice_string.txt', 'utf8', function (err, data) {
         if (err) {
             console.log(err);
@@ -122,7 +134,7 @@ function random_nice_string(who,where) {
         let list = data.toString().split('\r\n');
         let str = list[getRandomInt(list.length)];
         console.log(str);
-        if (str == "")  str = list[0];
+        if (str == "") str = list[0];
         return say(who, where, str, '謝謝使用,如有問題請聯絡XXXXXX');
     });
 }
@@ -189,12 +201,12 @@ function showbutton(who, where) {
     }
     return who.replyMessage(where.replyToken, [message1, message2]);
 }
-function mongodbInsert(where,type,include) {
+function mongodbInsert(where, type, include) {
     MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         //Write databse Insert/Update/Query code here..
         var table = db.db("linebotDB").collection("questions");
-        var obj = { id: where.source.userId, type: type, include: include };
+        var obj = { id: where.source.userId, type: type, include: include, time: '0' };
         table.insertOne(obj, function (err, res) { // insertMany 是插入多個用的
             if (err) throw err;
             console.log("insert success");
@@ -202,7 +214,7 @@ function mongodbInsert(where,type,include) {
         db.close(); //關閉連線
     });
 };
-function downloadContent(client,messageId, downloadPath) {
+function downloadContent(client, messageId, downloadPath) {
     return client.getMessageContent(messageId)
         .then((stream) => new Promise((resolve, reject) => {
             const writable = fs.createWriteStream(downloadPath);
@@ -211,9 +223,9 @@ function downloadContent(client,messageId, downloadPath) {
             stream.on('error', reject);
         }));
 }
-function savequestion(who,where, type) {
+function savequestion(who, where, type) {
     if (type == 'text')
-        mongodbInsert(where, type, where.message.text);
+        mongodbInsert(where, type, TransferString(where.message.text));
     else if (type == 'image') {
         let dstpath = './static/questions/' + where.message.id + '.jpg';
         downloadContent(who, where.message.id, dstpath);
@@ -236,7 +248,7 @@ function handleEvent(event) {
             }
             else if (usermode[event.source.userId] == 'askquestion') {
                 usermode[event.source.userId] = '';
-                savequestion(client,event, 'text');
+                savequestion(client, event, 'text');
                 return say(client, event, '😀' + '已記錄問題,過幾天來此輸入\'我要答案\'就可以得到回應囉', '謝謝使用,如有問題請聯絡XXXXXX');
             }
             else if (event.message.text == '選單')
@@ -246,7 +258,7 @@ function handleEvent(event) {
             else if (event.message.text == '行事曆')
                 return showImg(client, event, 'schedule', 'schedule', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '教學')
-                return say(client, event,   '😀' + learn_word, '謝謝使用,如有問題請聯絡XXXXXX');
+                return say(client, event, '😀' + learn_word, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '抽名言')
                 return random_nice_string(client, event);
             else if (event.message.text == '成績') {
@@ -271,7 +283,7 @@ function handleEvent(event) {
                 return say(client, event, '請直接在下方輸入想問的問題, 文字或圖片(擇一,不可中斷)', '謝謝使用');
             }
             else if (event.message.text.split('-')[0] == '紀錄ID') {
-                fs.appendFile('./static/data/IDrecord.txt', '\n' + event.message.text +'['+ event.source.userId + ']', function (err) {
+                fs.appendFile('./static/data/IDrecord.txt', '\n' + event.message.text + '[' + event.source.userId + ']', function (err) {
                     if (err) console.log(err);
                     else console.log('Write operation complete.');
                 });
@@ -286,7 +298,7 @@ function handleEvent(event) {
             console.log('image');
             if (usermode[event.source.userId] == 'askquestion') {
                 usermode[event.source.userId] = '';
-                savequestion(client,event, 'image');
+                savequestion(client, event, 'image');
                 return say(client, event, '😀' + '已記錄問題,過幾天來此輸入\'我要答案\'就可以得到回應囉', '謝謝使用,如有問題請聯絡XXXXXX');
             }
             else
@@ -300,13 +312,61 @@ function handleEvent(event) {
 //post
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); //get json
-//broadcast
+function mongodbUpdate(id, type, include, int) {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var table = db.db("linebotDB").collection("questions");
+        var filter = { id: id, type: type, include: include };
+        var goal = { $set: { time: int } };
+        table.updateOne(filter, goal, function (err, res) { // insertMany 是插入多個用的
+            if (err) throw err;
+            console.log("update success");
+        });
+        db.close(); //關閉連線
+    });
+}
+function mongodbFindandUpdate(id, type, include) {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var table = db.db("linebotDB").collection("questions");
+        var obj = { id: id, type: type, include: include };
+        console.log(obj);
+        table.findOne(obj, function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            mongodbUpdate( id, type, include, (parseInt(result.time) + 1).toString());
+        });
+        db.close(); //關閉連線
+    });
+}
+function mongodbInsertAns(id, type, include, dpath, str) {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        //Write databse Insert/Update/Query code here..
+        var table = db.db("linebotDB").collection("answers");
+        var obj = { id: id, type: type, include: include, path: dpath, str: str };
+        table.insertOne(obj, function (err, res) { // insertMany 是插入多個用的
+            if (err) throw err;
+            console.log("insert ans success");
+        });
+        db.close(); //關閉連線
+    });
+};
+//questions and answers
 app.post('/get_answer', function (req, res) {
-    res.render('get_answer');
+    res.render('get_answer', { id: req.body.id, type: req.body.type, include: req.body.include });
 });
-app.post('/solve', function (req, res) {
-
+app.post('/solve', uploadAns.single('file'), (req, res) => {
+    var a = req.file.originalname.split('.').pop();
+    fs.rename(req.file.path, req.file.path + "." + a, function (err) {
+        if (err) throw err;
+        console.log(req.file.path + "." + a + "~~ok");
+        mongodbFindandUpdate(req.body.id, req.body.type, req.body.include);
+        mongodbInsertAns(req.body.id, req.body.type, req.body.include, req.file.path + "." + a, req.body.str);
+        res.render("index");
+    });
 });
+//broadcast
 app.post('/broadcast/:aid', upload.single('img'), (req, res) => {
     if (req.body.username == 'admin' && req.body.userpassword == '0000') {
         //console.log(req.body);
@@ -318,12 +378,13 @@ app.post('/broadcast/:aid', upload.single('img'), (req, res) => {
         else if (req.params.aid.toString() == 'img') {
             fs.rename(req.file.path, req.file.path + "." + req.body.last, function (err) {
                 if (err) throw err;
+                //console.log(req.file);
                 console.log(req.file.path + "." + req.body.last + "~~ok");
                 res.render("img_send", { path: "..\\" + req.file.path + "." + req.body.last });
             });
         }
         else if (req.params.aid.toString() == 'pdf') {
-            fs.rename(req.file.path, req.file.path + ".pdf" , function (err) {
+            fs.rename(req.file.path, req.file.path + ".pdf", function (err) {
                 if (err) throw err;
                 console.log(req.file.path + ".pdf" + "~~ok");
                 res.render("pdf_send", { path: "..\\" + req.file.path + ".pdf" });

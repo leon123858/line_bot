@@ -11,11 +11,13 @@
     <div>
         <%for( var i=0; i < num ; i ++) {%>
         <form action="/get_answer" method="post">
+            <span><%=data[i]['time']%>人解題過</span>
             <input type="text" name="id" value="<%=data[i]['id']%>" readonly>
             <input type="text" name="type" value="<%=data[i]['type']%>" readonly>
-            <input type="text" name="include" value="<%=data[i]['include']%>" readonly>
+            <textarea name="include" readonly><%=data[i]['include']%></textarea>
             <br>
             <input type="submit" value="我來解吧" />
+            <br><br>
         </form>
         <%}%>
     </div>

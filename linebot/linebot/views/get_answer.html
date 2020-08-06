@@ -7,5 +7,21 @@
 </head>
 <body>
     <h1>解題區</h1>
+    <h3>題目</h3>
+    <img src="<%=include%>" alt="本題無圖片" /><br>
+    <textarea cols="50" rows="5" placeholder="本題無文字題目" readonly><%=include%></textarea><br>
+    <form action="/solve" method="post" enctype="multipart/form-data">
+        <div style="display:none">
+            <input type="text" name="id" value="<%=id%>" readonly>
+            <input type="text" name="type" value="<%=type%>" readonly>
+            <input type="text" name="include" value="<%=include%>" readonly>
+        </div>
+        <br>
+        <textarea cols="50" rows="5" name="str" placeholder="輸入你的解題文字..."></textarea><br>
+        <span>上傳你的解題檔案(可圖片可文件)</span>
+        <!--<input name="lastname" type="text" required placeholder="ex:jpg, doc, pdf"/>-->
+        <input name="file" type="file" required/><br><br>
+        <input type="submit" value="寄出" />
+    </form>
 </body>
 </html>
