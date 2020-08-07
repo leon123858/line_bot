@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>你的解答區</title>
+</head>
+<body>
+    <h1>你的解答區</h1>
+    <h3>點擊進入答案</h3>
+    <div>
+        <%for( var i=0; i < num ; i ++) {%>
+        <form action="/show_answer" method="post">
+            你看過這題 : <span><%=data[i]['see']%></span>&nbsp&nbsp&nbsp&nbsp
+            <input type="text" name="token" value="<%=data[i]['_id']%>" readonly>
+            <p><%=data[i]['str']%></p>
+            <input type="submit" value="我要看答案" />
+            <hr />
+        </form>
+        <%}%>
+    </div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>Answer for this question</h1>
+    <textarea readonly><%=data[0]['include']%></textarea><br>
+    <img src="<%=data[0]['include']%>" alt="本題題目無圖片" />
+    <h2>答案</h2>
+    <textarea readonly><%=data[0]['str']%></textarea>
+    <br>
+    <a href="<%=data[0]['path']%>">點擊可以手動下載答案檔</a>
+    <iframe src="<%=data[0]['path']%>" style="width:100%; height:1000px"></iframe>
+</body>
+</html>

@@ -5,7 +5,8 @@ var request = require('request');
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require("multer");
-var MongoClient = require('mongodb').MongoClient;
+var mongo = require('mongodb');
+var MongoClient = mongo.MongoClient;
 var app = new express();
 var HTTPpath = "";
 var learn_word = "";
@@ -148,13 +149,13 @@ function showbutton(who, where) {
             "actions": [
                 {
                     "type": "message",
-                    "label": "選單",
-                    "text": "選單"
+                    "label": "教學",
+                    "text": "教學"
                 },
                 {
                     "type": "message",
-                    "label": "教學",
-                    "text": "教學"
+                    "label": "意見反映",
+                    "text": "意見反映"
                 },
                 {
                     "type": "message",
@@ -183,13 +184,13 @@ function showbutton(who, where) {
                 },
                 {
                     "type": "message",
-                    "label": "意見反映",
-                    "text": "意見反映"
+                    "label": "抽名言",
+                    "text": "抽名言"
                 },
                 {
                     "type": "message",
-                    "label": "抽名言",
-                    "text": "抽名言"
+                    "label": "要答案",
+                    "text": "要答案"
                 },
                 {
                     "type": "message",
@@ -253,6 +254,8 @@ function handleEvent(event) {
             }
             else if (event.message.text == '選單')
                 return showbutton(client, event);
+            else if (event.message.text == '要答案')
+                return say(client, event, '請自行跳轉至答案區往址:', HTTPpath + '/show_answer_table?id=' + event.source.userId + '&openExternalBrowser=1');
             else if (event.message.text == '課表')
                 return showImg(client, event, 'classtable', 'classtable', '以上是' + event.message.text, '謝謝使用,如有問題請聯絡XXXXXX');
             else if (event.message.text == '行事曆')
@@ -312,7 +315,7 @@ function handleEvent(event) {
 //post
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); //get json
-function mongodbUpdate(id, type, include, int) {
+function mongodbUpdateTime(id, type, include, int) {
     MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var table = db.db("linebotDB").collection("questions");
@@ -321,6 +324,35 @@ function mongodbUpdate(id, type, include, int) {
         table.updateOne(filter, goal, function (err, res) { // insertMany 是插入多個用的
             if (err) throw err;
             console.log("update success");
+        });
+        db.close(); //關閉連線
+    });
+}
+function mongodbFindAns(token, res) {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var table = db.db("linebotDB").collection("answers");
+        var obj = { _id: token};
+        console.log(obj);
+        table.find(obj).toArray(function(err, result) {
+            if (err) throw err;
+            console.log(result);
+            res.render('answer_show', { data: result });
+        });
+        db.close(); //關閉連線
+    });
+}
+function mongodbUpdateSeeandFind(token,res) {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var table = db.db("linebotDB").collection("answers");
+        var new_token = new mongo.ObjectID(token);
+        var filter = { _id: new_token };
+        var goal = { $set: { see: 'yes' } };
+        table.updateOne(filter, goal, function (err, result) { // insertMany 是插入多個用的
+            if (err) throw err;
+            console.log("update success");
+            mongodbFindAns(new_token, res);
         });
         db.close(); //關閉連線
     });
@@ -334,7 +366,21 @@ function mongodbFindandUpdate(id, type, include) {
         table.findOne(obj, function (err, result) {
             if (err) throw err;
             console.log(result);
-            mongodbUpdate( id, type, include, (parseInt(result.time) + 1).toString());
+            mongodbUpdateTime( id, type, include, (parseInt(result.time) + 1).toString());
+        });
+        db.close(); //關閉連線
+    });
+}
+function mongodbFindAnsById(id, res) {
+    MongoClient.connect("mongodb://localhost:27017/", { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var table = db.db("linebotDB").collection("answers");
+        var obj = { id: id};
+        console.log(obj);
+        table.find(obj).toArray(function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            res.render('answerTable_show', { data: result, num: result.length });
         });
         db.close(); //關閉連線
     });
@@ -344,7 +390,7 @@ function mongodbInsertAns(id, type, include, dpath, str) {
         if (err) throw err;
         //Write databse Insert/Update/Query code here..
         var table = db.db("linebotDB").collection("answers");
-        var obj = { id: id, type: type, include: include, path: dpath, str: str };
+        var obj = { id: id, type: type, include: include, path: dpath, str: str ,see: 'no'};
         table.insertOne(obj, function (err, res) { // insertMany 是插入多個用的
             if (err) throw err;
             console.log("insert ans success");
@@ -353,6 +399,12 @@ function mongodbInsertAns(id, type, include, dpath, str) {
     });
 };
 //questions and answers
+app.post('/show_answer', function (req, res) {
+    mongodbUpdateSeeandFind(req.body.token, res);
+});
+app.get('/show_answer_table', function (req, res) {
+    mongodbFindAnsById(req.query.id, res);
+});
 app.post('/get_answer', function (req, res) {
     res.render('get_answer', { id: req.body.id, type: req.body.type, include: req.body.include });
 });
@@ -405,7 +457,7 @@ app.post('/broadcast_img', function (req, res) {
 })
 app.post('/broadcast_pdf', function (req, res) {
     let str = HTTPpath + req.body.path.toString().replace('..\\', '/').replace('\\', '/').replace('\\', '/');
-    const echo = { type: 'text', text: HTTPpath + '/write_pdf?path=' + str + '&num=' + req.body.num + '\r\n' + req.body.say.toString() };
+    const echo = { type: 'text', text: HTTPpath + '/write_pdf?path=' + str + '&num=' + req.body.num + '&openExternalBrowser=1'+ '\r\n' + req.body.say.toString() };
     client.broadcast(echo);
     res.render("index");
 })
