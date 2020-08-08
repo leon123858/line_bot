@@ -13,17 +13,22 @@
     <h1>你的解答區</h1>
     <h3>點擊進入答案</h3>
     <div>
-        <input  id="show" type="button" value="顯示已閱讀" />
-        <br><hr />
+        <div style="text-align:center">
+            <input class="function_button" id="show" type="button" value="顯示已閱讀" />
+        </div>
+        <hr />
         <%for( var i=0; i < num ; i ++) {%>
-            <form action="/show_answer" method="post">
-                <span class="no_important_information">你看過這題 :</span><strong class="no_important_information"><%=data[i]['see']%></strong>
-                <input class="no_important_information" type="text" name="token" value="<%=data[i]['_id']%>" readonly>
-                <p><%=data[i]['str']%></p>
-                <input type="submit" value="我要看答案" />
-                <hr />
-            </form>
+        <form action="/show_answer" method="post">
+            <span class="no_important_information">你看過這題 :</span><strong class="no_important_information"><%=data[i]['see']%></strong>
+            <input class="no_important_information" type="text" name="token" value="<%=data[i]['_id']%>" readonly>
+            <span style="margin-left:30px">(<%=(i+1)%>)<%=data[i]['str']%></span>
+            <input type="submit" value="我要看答案" />
+        </form>
+        <br />
         <%}%>
+        <br>
+        <br>
+    </div>
         <script>
             function HideOrShowHaveRead(str) {
                 $("form").each(function () {
@@ -44,6 +49,5 @@
                 });
             });
         </script>
-    </div>
 </body>
 </html>

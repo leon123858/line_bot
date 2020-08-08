@@ -2,6 +2,89 @@
     .no_important_information{
         
     }
+    img{
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    p{
+        font-family: Microsoft JhengHei;
+        font-size: 200%;
+    }
+    a{
+        background-color: aquamarine;
+        color: cornflowerblue;
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        font-size: 450%;
+    }
+    h1{
+        background-color: aquamarine;
+        color: cornflowerblue;
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        font-size: 1000%;
+    }
+    h3{
+        color:black;
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        font-size: 500%;
+    }
+    .function_button {
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        color: #444444;
+        background: #F3F3F3;
+        border-radius: 2px;
+        box-shadow: 1px 1px 1px #EAEAEA;
+        font-size: 500%;
+    }
+
+    .function_button:hover {
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        border: 1px #C6C6C6 solid;
+        border: 2px #222222 solid;
+        color: #333333;
+        background: #F7F7F7;
+        font-weight: bold;
+        font-size: 500%;
+    }
+    hr {
+        border-top: 5px solid cornflowerblue;
+    }
+    form{
+        font-family: Microsoft JhengHei;
+        margin-left: 30px;
+        color:black;
+        background-color: aqua;
+        border: 5px #222222 solid;
+        border-radius: 50px;
+        font-size: 300%;
+        line-height:150%;
+        word-break:break-all;
+    }
+    input[type="submit"]{
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        color: #444444;
+        background: #F3F3F3;
+        border-radius: 30px;
+        box-shadow: 1px 1px 1px #EAEAEA;
+        font-size: 130%;
+    }
+    input[type="submit"]:hover {
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        border: 1px #C6C6C6 solid;
+        border: 2px #222222 solid;
+        color: #333333;
+        background: #F7F7F7;
+        font-weight: bold;
+        border-radius: 30px;
+        font-size: 130%;
+    }
 
     /*.input_btn{
     border:0;
@@ -24,6 +107,69 @@
         height: 20px;
     }*/
 }
-@media (min-width: 800px) {
-    
+@media (min-width: 1200px) {
+    h1{
+        background-color: aquamarine;
+        color: cornflowerblue;
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        font-size: 300%;
+    }
+    h3{
+        color:black;
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        font-size: 150%;
+    }
+    .function_button {
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        color: #444444;
+        background: #F3F3F3;
+        border-radius: 2px;
+        box-shadow: 1px 1px 1px #EAEAEA;
+        font-size: 150%;
+    }
+
+    .function_button:hover {
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        border: 1px #C6C6C6 solid;
+        border: 2px #222222 solid;
+        color: #333333;
+        background: #F7F7F7;
+        font-weight: bold;
+        font-size: 150%;
+    }
+    form{
+        font-family: Microsoft JhengHei;
+        margin-left: 30px;
+        color:black;
+        background-color: aqua;
+        border: 3px #222222 solid;
+        border-radius: 50px;
+        font-size: 200%;
+        line-height:150%;
+        word-break:break-all;
+    }
+    input[type="submit"]{
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        color: #444444;
+        background: #F3F3F3;
+        border-radius: 20px;
+        box-shadow: 1px 1px 1px #EAEAEA;
+        font-size: 100%;
+    }
+    input[type="submit"]:hover {
+        font-family: Microsoft JhengHei;
+        text-align: center;
+        border: 1px #C6C6C6 solid;
+        border: 2px #222222 solid;
+        color: #333333;
+        background: #F7F7F7;
+        font-weight: bold;
+        border-radius: 20px;
+        font-size: 100%;
+    }
 }
