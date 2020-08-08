@@ -1,0 +1,29 @@
+@media (min-width: 0px) {
+    .no_important_information{
+        
+    }
+
+    /*.input_btn{
+    border:0;
+    color: black;
+    font-family: Microsoft JhengHei;
+    background-color: #DBDBDB;
+    width:70%;
+    font-size: 180%;
+    }
+
+    button{
+    border:0;
+    color: white;
+    font-family: Microsoft JhengHei;
+    background-color: #0D31F7;
+    font-size: 250%;
+    }
+    input[type="radio"]{
+        width: 20px;
+        height: 20px;
+    }*/
+}
+@media (min-width: 800px) {
+    
+}

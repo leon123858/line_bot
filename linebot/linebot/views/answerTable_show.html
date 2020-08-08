@@ -3,21 +3,47 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
+    <script src="../static/JSL/jquery.js"></script>
+    <style type="text/css">
+        @import "../static/JSL/style.css";
+    </style>
     <title>你的解答區</title>
 </head>
 <body>
     <h1>你的解答區</h1>
     <h3>點擊進入答案</h3>
     <div>
+        <input  id="show" type="button" value="顯示已閱讀" />
+        <br><hr />
         <%for( var i=0; i < num ; i ++) {%>
-        <form action="/show_answer" method="post">
-            你看過這題 : <span><%=data[i]['see']%></span>&nbsp&nbsp&nbsp&nbsp
-            <input type="text" name="token" value="<%=data[i]['_id']%>" readonly>
-            <p><%=data[i]['str']%></p>
-            <input type="submit" value="我要看答案" />
-            <hr />
-        </form>
+            <form action="/show_answer" method="post">
+                <span class="no_important_information">你看過這題 :</span><strong class="no_important_information"><%=data[i]['see']%></strong>
+                <input class="no_important_information" type="text" name="token" value="<%=data[i]['_id']%>" readonly>
+                <p><%=data[i]['str']%></p>
+                <input type="submit" value="我要看答案" />
+                <hr />
+            </form>
         <%}%>
+        <script>
+            function HideOrShowHaveRead(str) {
+                $("form").each(function () {
+                    if ($(this).children("strong").html() == str)
+                        $(this).hide();
+                    else
+                        $(this).show();
+                    $(this).children(".no_important_information").hide();
+                });
+                return str == 'yes' ? 'no' : 'yes';
+            }
+            $(document).ready(function () {
+                var YesNo = 'yes';
+                YesNo = HideOrShowHaveRead(YesNo);
+                $("#show").click(function () {
+                    YesNo = HideOrShowHaveRead(YesNo);
+                    $("#show").val() == '顯示未閱讀題目' ? $("#show").val('顯示已閱讀') : $("#show").val('顯示未閱讀題目');
+                });
+            });
+        </script>
     </div>
 </body>
 </html>
