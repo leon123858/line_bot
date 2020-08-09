@@ -5,50 +5,73 @@
     <meta charset="utf-8" />
     <title>broadcast</title>
     <script src="../static/JSL/jquery.js"></script>
-    <!--<link rel="stylesheet" href="../static/JSL/UnoDropZone.css">
-    <script src="../static/JSL/UnoDropZone.js"></script>-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>廣播區</h1>
-    <div>
+    <div class="container" style="font-family:Microsoft JhengHei;font-size:200%">
+        <div class="jumbotron text-center">
+            <h1>教師教學輔助line_bot</h1><small>測試版</small>
+        </div>
+
+        <nav class="nav navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" ref="/changeview/broadcast">我要廣播</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/view">首頁</a></li>
+                    <li><a href="/changeview/get_question">我要解題</a></li>
+                </ul>
+            </div>
+        </nav>
+        <h3>廣播區</h3>
+        <p>以下提供對於全體使用者的廣播,包含文字廣播,圖片廣播以及通知單廣播</p>
         <div>
-            <h2>文字區</h2>
-            <form action="/broadcast/string" method="post">
+            <div>
+                <h2>文字區</h2>
+                <form action="/broadcast/string" method="post">
+                    帳號:<input type="text" name="username"><br><br>
+                    密碼:<input type="password" name="userpassword"><br><br>
+                    <textarea cols="50" rows="5" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
+                    <input type="submit" value="廣播" />
+                </form>
+            </div>
+            <div>
+                <h4>可複製下方表情貼圖座使用</h4>
+                <textarea cols="50" rows="5" readonly><%=emoji%></textarea>
+            </div>
+        </div>
+        <div>
+            <h2>圖片區</h2>
+            <form action="/broadcast/img" method="post" enctype="multipart/form-data">
                 帳號:<input type="text" name="username"><br><br>
                 密碼:<input type="password" name="userpassword"><br><br>
-                <textarea cols="50" rows="5" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
+                <input name="last" type="text" placeholder="副檔名 ex:jpg,png"  required/>
+                <div>
+                    <input type="file" name="img" accept="image/*">
+                </div>
                 <input type="submit" value="廣播" />
             </form>
         </div>
         <div>
-            <h4>可複製下方表情貼圖座使用</h4>
-            <textarea cols="50" rows="5" readonly><%=emoji%></textarea>
+            <h2>通知單區</h2>
+            <h4>限pdf檔</h4>
+            <form action="/broadcast/pdf" method="post" enctype="multipart/form-data">
+                帳號:<input type="text" name="username"><br><br>
+                密碼:<input type="password" name="userpassword"><br><br>
+                <div>
+                    <input type="file" name="img" accept=".pdf">
+                </div>
+                <input type="submit" value="廣播" />
+            </form>
         </div>
     </div>
-    <div>
-        <h2>圖片區</h2>
-        <form action="/broadcast/img" method="post" enctype="multipart/form-data">
-            帳號:<input type="text" name="username"><br><br>
-            密碼:<input type="password" name="userpassword"><br><br>
-            <input name="last" type="text" placeholder="副檔名 ex:jpg,png" />
-            <div>
-                <input type="file" name="img" accept="image/*">
-            </div>
-            <input type="submit" value="廣播" />
-        </form>
-    </div>
-    <div>
-        <h2>通知單區</h2>
-        <h4>限pdf檔</h4>
-        <form action="/broadcast/pdf" method="post" enctype="multipart/form-data">
-            帳號:<input type="text" name="username"><br><br>
-            密碼:<input type="password" name="userpassword"><br><br>
-            <div>
-                <input type="file" name="img" accept=".pdf">
-            </div>
-            <input type="submit" value="廣播" />
-        </form>
-    </div>
+    
     <script>
         $(document).ready(function () {
 

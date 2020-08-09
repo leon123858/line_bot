@@ -3,17 +3,53 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
     <title>首頁</title>
-    <script src="../static/JSL/jquery.js"></script>
 </head>
 <body>
-    <h1>教師教學輔助line_bot</h1>
-    <img alt="qrCode" src="../static/QRcode.png" width="300px">
-    <h3>id:@634mymoo</h3>
-    <h3>寄出"教學"可以取得使用說明</h3>
-    <a  href="/changeview/broadcast">broadcast</a><br>
-    <a  href="/changeview/get_question">我要解題</a>
-    <script>
-    </script>
+    <div class="container" style="font-family:Microsoft JhengHei;font-size:200%">
+        <div class="jumbotron text-center">
+            <h1>教師教學輔助line_bot</h1><small>測試版</small>
+        </div>
+
+        <nav class="nav navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" ref="/view">首頁</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a  href="/changeview/broadcast">我要廣播</a></li>
+                    <li><a  href="/changeview/get_question">我要解題</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div >
+            <div  >
+                <h3>首頁</h3>
+                <p>歡迎使用本系統,下方有line bot的QRcode和id, 手機掃描或加入即可直接使用。</p>
+                <p>若您有相關權限也可以直接到上方的功能區使用相關功能</p>
+            </div>
+            <!--<div id="menu1" class="tab-pane fade">
+                <h3>廣播區</h3>
+                <p>以下提供對於全體使用者的廣播,包含文字廣播,圖片廣播以及通知單廣播</p>
+            </div>
+            <div id="menu2" class="tab-pane fade">
+                <h3>解題區</h3>
+                <p>點擊以下各個問題即可進行回答</p>
+            </div>-->
+        </div>
+
+        <img alt="qrCode" src="../static/QRcode.png" width="300">
+        <h3>id:@634mymoo</h3>
+        <h3>寄出"教學"可以取得使用說明</h3>
+        <br>
+    </div>
+
 </body>
 </html>
