@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <title>broadcast</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="../static/JSL/jquery.js"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
@@ -29,52 +30,137 @@
                 </ul>
             </div>
         </nav>
-        <h3>廣播區</h3>
-        <p>以下提供對於全體使用者的廣播,包含文字廣播,圖片廣播以及通知單廣播</p>
-        <div>
-            <div>
-                <h2>文字區</h2>
-                <form action="/broadcast/string" method="post">
-                    帳號:<input type="text" name="username"><br><br>
-                    密碼:<input type="password" name="userpassword"><br><br>
-                    <textarea cols="50" rows="5" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
-                    <input type="submit" value="廣播" />
-                </form>
+        <div style="color:darkgray">
+            <h3>廣播區</h3>
+            <p>以下提供對於全體使用者的廣播,包含文字廣播,圖片廣播以及通知單廣播</p>
+        </div>
+        <div class="dropdown">
+            <button class="btn dropdown-toggle btn-lg" data-toggle="dropdown"> 廣播模式</button>
+            <ul class="dropdown-menu">
+                <li><input  type="button" role="menuitem" tabindex="-1" value="文字廣播" style="width:100%"></li>
+                <li><input  type="button" role="menuitem" tabindex="-1" value="圖片廣播" style="width:100%"></li>
+                <li><input  type="button" role="menuitem" tabindex="-1" value="通知廣播" style="width:100%"></li>
+            </ul>
+        </div>
+
+        <form action="/broadcast/string" method="post" id="block1">
+            <h2>文字區</h2>
+            <div class=" form-group container">
+                <div class="input-group input-group-lg row">
+                    <input class="col-6 form-control" type="text" name="username" placeholder="帳號" aria-label="Large" aria-describedby="inputGroup-sizing-sm"><br />
+                    <input class="col-6 form-control" type="password" name="userpassword" placeholder="密碼" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                </div>
             </div>
-            <div>
+            <div class="form-group">
+                <textarea class="form-control" cols="50" rows="5" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
+            </div>
+            <div class="form-group">
                 <h4>可複製下方表情貼圖座使用</h4>
-                <textarea cols="50" rows="5" readonly><%=emoji%></textarea>
+                <textarea class="form-control" cols="50" rows="5" readonly><%=emoji%></textarea>
             </div>
-        </div>
-        <div>
+            <button type="submit" class="btn btn-default btn-lg">廣播文字內容</button>
+        </form>
+
+        <form action="/broadcast/img" method="post" enctype="multipart/form-data" id="block2">
             <h2>圖片區</h2>
-            <form action="/broadcast/img" method="post" enctype="multipart/form-data">
+            <div class=" form-group container">
+                <div class="input-group input-group-lg row">
+                    <input class="col-6 form-control" type="text" name="username" placeholder="帳號" aria-label="Large" aria-describedby="inputGroup-sizing-sm"><br />
+                    <input class="col-6 form-control" type="password" name="userpassword" placeholder="密碼" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="last" type="text" placeholder="副檔名 ex:jpg,png" required />
+                <div>
+                    <input class="form-control" type="file" name="img" accept="image/*">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-default btn-lg">廣播圖片內容</button>
+        </form>
+
+        <form action="/broadcast/pdf" method="post" enctype="multipart/form-data" id="block3">
+            <h2>通知單區<small>限pdf檔</small></h2>
+            <div class=" form-group container">
+                <div class="input-group input-group-lg row">
+                    <input class="col-6 form-control" type="text" name="username" placeholder="帳號" aria-label="Large" aria-describedby="inputGroup-sizing-sm"><br />
+                    <input class="col-6 form-control" type="password" name="userpassword" placeholder="密碼" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <input class="form-control" type="file" name="img" accept=".pdf">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-default btn-lg">廣播檔案內容</button>
+        </form>
+
+        <p id="block4">請先選擇廣播模式</p>
+        <!--<div>
+        <div>
+            <h2>文字區</h2>
+            <form action="/broadcast/string" method="post">
                 帳號:<input type="text" name="username"><br><br>
                 密碼:<input type="password" name="userpassword"><br><br>
-                <input name="last" type="text" placeholder="副檔名 ex:jpg,png"  required/>
-                <div>
-                    <input type="file" name="img" accept="image/*">
-                </div>
+                <textarea class="form-control" id="exampleFormControlTextarea1" name="str" placeholder="輸入你想要廣播的的文字..."></textarea>
                 <input type="submit" value="廣播" />
             </form>
         </div>
         <div>
-            <h2>通知單區</h2>
-            <h4>限pdf檔</h4>
-            <form action="/broadcast/pdf" method="post" enctype="multipart/form-data">
-                帳號:<input type="text" name="username"><br><br>
-                密碼:<input type="password" name="userpassword"><br><br>
-                <div>
-                    <input type="file" name="img" accept=".pdf">
-                </div>
-                <input type="submit" value="廣播" />
-            </form>
+            <h4>可複製下方表情貼圖座使用</h4>
+            <textarea cols="50" rows="5" readonly><%=emoji%></textarea>
         </div>
+    </div>-->
+        <!--<div>
+        <h2>圖片區</h2>
+        <form action="/broadcast/img" method="post" enctype="multipart/form-data">
+            帳號:<input type="text" name="username"><br><br>
+            密碼:<input type="password" name="userpassword"><br><br>
+            <input name="last" type="text" placeholder="副檔名 ex:jpg,png" required />
+            <div>
+                <input type="file" name="img" accept="image/*">
+            </div>
+            <input type="submit" value="廣播" />
+        </form>
+    </div>-->
+        <!--<div>
+        <h2>通知單區</h2>
+        <h4>限pdf檔</h4>
+        <form action="/broadcast/pdf" method="post" enctype="multipart/form-data">
+            帳號:<input type="text" name="username"><br><br>
+            密碼:<input type="password" name="userpassword"><br><br>
+            <div>
+                <input type="file" name="img" accept=".pdf">
+            </div>
+            <input type="submit" value="廣播" />
+        </form>
+    </div>-->
     </div>
-    
+    <br /><br /><br /><br />
     <script>
         $(document).ready(function () {
-
+            $("form").hide();
+            if (localStorage.getItem('username'))
+                $("input[name ='username']").val(localStorage.getItem('username'));
+            if (localStorage.getItem('userpassword'))
+                $("input[name ='userpassword']").val(localStorage.getItem('userpassword'));
+            $(".dropdown").click(function () {
+                $(this).find("input").show();
+            });
+            $(".dropdown").find("input").click(function () {
+                for (var i = 1; i <= 4; i++)
+                    $("#block" + i).hide();
+                if ($(this).val() == "文字廣播")
+                    $("#block1").show();
+                else if ($(this).val() == "圖片廣播") 
+                    $("#block2").show();
+                else if ($(this).val() == "通知廣播") 
+                    $("#block3").show();
+                $(".dropdown").find("input").stop().slideToggle(500);
+            });
+            $("form").submit(function (e) {
+                window.localStorage.setItem('username', $(this).find("input[name ='username']").val());
+                window.localStorage.setItem('userpassword', $(this).find("input[name ='userpassword']").val());
+            });
         });
     </script>
 </body>

@@ -4,22 +4,49 @@
 <head>
     <meta charset="utf-8" />
     <title>解題</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../static/JSL/jquery.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>解題</h1>
-    <h3>點擊題目開始解題</h3>
-    <div>
-        <%for( var i=0; i < num ; i ++) {%>
-        <form action="/get_answer" method="post">
-            <span><%=data[i]['time']%>人解題過</span>
-            <input type="text" name="id" value="<%=data[i]['id']%>" readonly>
-            <input type="text" name="type" value="<%=data[i]['type']%>" readonly>
-            <textarea name="include" readonly><%=data[i]['include']%></textarea>
-            <br>
-            <input type="submit" value="我來解吧" />
-            <br><br>
-        </form>
-        <%}%>
+    <div class="container" style="font-family:Microsoft JhengHei;font-size:200%">
+        <div class="jumbotron text-center">
+            <h1>教師教學輔助line_bot</h1><small>測試版</small>
+        </div>
+        <nav class="nav navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" ref="/changeview/get_question">我要解題</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/view">首頁</a></li>
+                    <li><a href="/changeview/broadcast">我要廣播</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div style="color:darkgray">
+            <h3>解題區</h3>
+            <p>點擊以下各個問題即可進行回答</p>
+        </div>
+
+        <div>
+            <%for( var i=0; i < num ; i ++) {%>
+            <form action="/get_answer" method="post">
+                <span><%=data[i]['time']%>人解題過</span>
+                <input type="text" name="id" value="<%=data[i]['id']%>" readonly>
+                <input type="text" name="type" value="<%=data[i]['type']%>" readonly>
+                <textarea name="include" readonly><%=data[i]['include']%></textarea>
+                <br>
+                <input type="submit" value="我來解吧" />
+                <br><br>
+            </form>
+            <%}%>
+        </div>
     </div>
 </body>
 </html>
