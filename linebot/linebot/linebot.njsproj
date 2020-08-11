@@ -58,6 +58,9 @@
     <Content Include="views\pdf_sign.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="web.config">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="views\" />

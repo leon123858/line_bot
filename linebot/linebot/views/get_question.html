@@ -34,19 +34,68 @@
             <p>點擊以下各個問題即可進行回答</p>
         </div>
 
+        <div class="dropdown">
+            <button class="btn dropdown-toggle btn-lg" data-toggle="dropdown">過濾</button>
+            <ul class="dropdown-menu">
+                <li><input type="button" role="menuitem" tabindex="-1" value="0人解過" style="width:100%"></li>
+                <li><input type="button" role="menuitem" tabindex="-1" value="2人以下解過" style="width:100%"></li>
+                <li><input type="button" role="menuitem" tabindex="-1" value="3人以上解過" style="width:100%"></li>
+            </ul>
+        </div>
+        <br>
         <div>
             <%for( var i=0; i < num ; i ++) {%>
-            <form action="/get_answer" method="post">
-                <span><%=data[i]['time']%>人解題過</span>
+            <form action="/get_answer" method="post" >
+                <p>第<%=i+1%>題:</p><strong><%=data[i]['time']%></strong><span>人解題過</span>
                 <input type="text" name="id" value="<%=data[i]['id']%>" readonly>
                 <input type="text" name="type" value="<%=data[i]['type']%>" readonly>
                 <textarea name="include" readonly><%=data[i]['include']%></textarea>
-                <br>
                 <input type="submit" value="我來解吧" />
                 <br><br>
             </form>
             <%}%>
+            <p id="noresult">
+                搜尋無結果
+            </p>
+            <br><br><br>
         </div>
     </div>
+    <script>
+
+        $(document).ready(function () {
+            $("#noresult").hide();
+            $("form").find("input[type = 'text']").hide();
+            $("form").find("textarea").hide();
+            $(".dropdown").click(function () {
+                $(this).find("input").show();
+            });
+            $(".dropdown").find("input").click(function () {
+                $("form").hide();
+                $("#noresult").show();
+                if ($(this).val() == "0人解過")
+                    $("form").each(function () {
+                        if (Number($(this).find('strong').text()) == 0) {
+                            $(this).show();
+                            $("#noresult").hide();
+                        }
+                    });
+                else if ($(this).val() == "2人以下解過")
+                    $("form").each(function () {
+                        if (Number($(this).find('strong').text()) < 3) {
+                            $(this).show();
+                            $("#noresult").hide();
+                        }
+                    });
+                else if ($(this).val() == "3人以上解過")
+                    $("form").each(function () {
+                        if (Number($(this).find('strong').text()) > 2) {
+                            $(this).show();
+                            $("#noresult").hide();
+                        }
+                    });
+                $(".dropdown").find("input").stop().slideToggle(500);
+            });
+        });
+    </script>
 </body>
 </html>
