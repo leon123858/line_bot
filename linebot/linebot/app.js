@@ -1,5 +1,6 @@
 'use strict';
 var fs = require('fs');
+var http=require('https');
 var line = require('@line/bot-sdk');
 var request = require('request');
 var express = require('express');
@@ -12,6 +13,12 @@ var HTTPpath = "";
 var learn_word = "";
 var gradeTable = {};
 var usermode = {};
+
+var options = {
+	key: fs.readFileSync('./cert/private.key'), // 私钥
+    cert: fs.readFileSync('./cert/mycert.crt') // 证书 
+};
+
 //multer set 上傳目標
 const upload = multer({ dest: "static/tmp" });
 const uploadAns = multer({ dest: "static/ans" });
@@ -473,7 +480,9 @@ app.post('/sign', function (req, res) {
         }
     });
 });
-var server = app.listen(process.env.PORT||8080, function () {
+
+var server = http.createServer(options, app);
+server.listen(process.env.PORT||4040, function () {
     var port = server.address().port;
     console.log('app now running on port', port);
 });
